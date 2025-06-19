@@ -105,6 +105,32 @@ main {
     footer {
         margin-top: 1.5rem;
     }
+    .main-nav {
+        display: block;
+        margin: 0.7rem 0 0 0;
+        text-align: center;
+    }
+    .nav-link {
+        font-size: 1rem;
+        padding: 0.4rem 0.7rem;
+        margin: 0 0.1rem;
+    }
+    .balance-wheel-section {
+        margin: 1.2rem 0 1.2rem 0;
+    }
+    .balance-wheel-section h2 {
+        font-size: 1.1rem;
+    }
+    #balanceWheel {
+        max-width: 98vw;
+    }
+    .balance-wheel-labels {
+        font-size: 0.92rem;
+        gap: 0.4rem 0.7rem;
+    }
+    .balance-wheel-labels li {
+        min-width: 90px;
+    }
 }
 
 @media (max-width: 400px) {
@@ -302,4 +328,72 @@ footer {
     padding: 1rem;
     width: 100%;
     margin-top: 2.5rem;
+}
+
+.main-nav {
+    display: inline-block;
+    margin-left: 2rem;
+    vertical-align: middle;
+}
+.nav-link {
+    display: inline-block;
+    color: #fff;
+    background: rgba(41,158,217,0.12);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.5rem 1.2rem;
+    border-radius: 12px;
+    margin: 0 0.2rem;
+    transition: background 0.2s, color 0.2s;
+}
+.nav-link:hover {
+    background: #b8d14a;
+    color: #fff;
+}
+.nav-link.active {
+    background: #299ed9;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(49,93,171,0.10);
+}
+
+.balance-wheel-section {
+    margin: 2.5rem 0 2.5rem 0;
+    text-align: center;
+}
+.balance-wheel-section h2 {
+    font-size: 1.5rem;
+    color: #299ed9;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+.balance-wheel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+}
+#balanceWheel {
+    max-width: 90vw;
+    height: auto;
+    margin-bottom: 0.5rem;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 12px rgba(49,93,171,0.07);
+}
+.balance-wheel-labels {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+}
+.balance-wheel-labels li {
+    min-width: 120px;
+    text-align: left;
 } 
