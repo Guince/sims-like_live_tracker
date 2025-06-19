@@ -193,8 +193,13 @@ main {
     text-align: right;
 }
 
+#habitForm {
+    padding: 0;
+    margin: 0;
+}
 input[type="text"] {
     width: 100%;
+    box-sizing: border-box;
     padding: 0.7rem 1rem;
     border-radius: 12px;
     border: 2px solid #b8d14a;
@@ -218,13 +223,8 @@ footer {
     color: #fff;
     text-align: center;
     padding: 1rem;
-    position: fixed;
     width: 100%;
-    bottom: 0;
-    left: 0;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-    box-shadow: 0 -2px 12px rgba(49,93,171,0.10);
+    margin-top: 2.5rem;
 }
 
 @media (max-width: 600px) {
@@ -246,7 +246,6 @@ footer {
         border-bottom-right-radius: 18px;
     }
     footer {
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
+        margin-top: 1.5rem;
     }
 } 
