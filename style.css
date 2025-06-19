@@ -45,6 +45,83 @@ main {
     z-index: 1;
 }
 
+@media (min-width: 1200px) {
+    main {
+        max-width: 1100px;
+        padding: 2.5rem 2rem 6rem 2rem;
+    }
+    .habit-item {
+        padding: 1.5rem 2rem 2rem 2rem;
+    }
+}
+
+@media (max-width: 900px) {
+    main {
+        max-width: 98vw;
+        padding: 1.5rem 0.5rem 5rem 0.5rem;
+    }
+    .habit-item {
+        padding: 1rem 0.5rem 1.2rem 0.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1rem 0.2rem 5rem 0.2rem;
+        margin-top: 1.5rem;
+        max-width: 100vw;
+        border-radius: 12px;
+    }
+    .calendar-day {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.8rem;
+    }
+    .modal-content {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
+    header {
+        padding: 1.5rem 0.5rem 1.2rem 0.5rem;
+        border-bottom-left-radius: 18px;
+        border-bottom-right-radius: 18px;
+    }
+    .habit-item {
+        border-radius: 10px;
+        padding: 0.7rem 0.2rem 1rem 0.2rem;
+    }
+    .primary-btn {
+        font-size: 1rem;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+    }
+    input[type="text"] {
+        font-size: 0.95rem;
+        padding: 0.6rem 0.7rem;
+        border-radius: 8px;
+    }
+    .modal-content {
+        border-radius: 12px;
+    }
+    footer {
+        margin-top: 1.5rem;
+    }
+}
+
+@media (max-width: 400px) {
+    header h1 {
+        font-size: 1.1rem;
+    }
+    .calendar-day {
+        width: 1.1rem;
+        height: 1.1rem;
+        font-size: 0.7rem;
+    }
+    .primary-btn {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.5rem;
+    }
+}
+
 .habits-section {
     margin-top: 1rem;
 }
@@ -225,27 +302,4 @@ footer {
     padding: 1rem;
     width: 100%;
     margin-top: 2.5rem;
-}
-
-@media (max-width: 600px) {
-    main {
-        padding: 1rem 0.2rem 5rem 0.2rem;
-        margin-top: 1.5rem;
-    }
-    .calendar-day {
-        width: 1.5rem;
-        height: 1.5rem;
-        font-size: 0.8rem;
-    }
-    .modal-content {
-        padding: 1.2rem 0.5rem 1rem 0.5rem;
-    }
-    header {
-        padding: 1.5rem 0.5rem 1.2rem 0.5rem;
-        border-bottom-left-radius: 18px;
-        border-bottom-right-radius: 18px;
-    }
-    footer {
-        margin-top: 1.5rem;
-    }
 } 
