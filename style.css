@@ -379,8 +379,10 @@ footer {
     height: auto;
     margin-bottom: 0.5rem;
     background: #fff;
-    border-radius: 50%;
+    border-radius: 16px;
     box-shadow: 0 2px 12px rgba(49,93,171,0.07);
+    padding: 1.5rem;
+    aspect-ratio: 3/2;
 }
 .balance-wheel-labels {
     display: flex;

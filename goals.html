@@ -25,40 +25,106 @@
         <section class="balance-wheel-section">
             <h2>Колесо баланса</h2>
             <div class="balance-wheel-container">
-                <svg id="balanceWheel" viewBox="0 0 300 300" width="300" height="300">
+                <svg id="balanceWheel" viewBox="0 0 600 400" width="600" height="400">
                     <!-- Секторы: равномерное деление круга на 8 частей -->
-                    <g>
-                        <path d="M150,150 L150,20 A130,130 0 0,1 242.43,57.57 Z" fill="#6fd47e"/>
-                        <path d="M150,150 L242.43,57.57 A130,130 0 0,1 280,150 Z" fill="#4a90e2"/>
-                        <path d="M150,150 L280,150 A130,130 0 0,1 242.43,242.43 Z" fill="#3cb371"/>
-                        <path d="M150,150 L242.43,242.43 A130,130 0 0,1 150,280 Z" fill="#ff6666"/>
-                        <path d="M150,150 L150,280 A130,130 0 0,1 57.57,242.43 Z" fill="#ffb347"/>
-                        <path d="M150,150 L57.57,242.43 A130,130 0 0,1 20,150 Z" fill="#ffd700"/>
-                        <path d="M150,150 L20,150 A130,130 0 0,1 57.57,57.57 Z" fill="#87ceeb"/>
-                        <path d="M150,150 L57.57,57.57 A130,130 0 0,1 150,20 Z" fill="#ff69b4"/>
-                    </g>
-                    <!-- Значения по центру секторов, между радиусами -->
-                    <g font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold">
-                        <text x="150" y="59" text-anchor="middle">5</text> <!-- 0° -->
-                        <text x="214" y="86" text-anchor="middle">5</text> <!-- 45° -->
-                        <text x="241" y="150" text-anchor="middle">5</text> <!-- 90° -->
-                        <text x="214" y="214" text-anchor="middle">5</text> <!-- 135° -->
-                        <text x="150" y="241" text-anchor="middle">5</text> <!-- 180° -->
-                        <text x="86" y="214" text-anchor="middle">5</text> <!-- 225° -->
-                        <text x="59" y="150" text-anchor="middle">5</text> <!-- 270° -->
-                        <text x="86" y="86" text-anchor="middle">5</text> <!-- 315° -->
+                    <g transform="translate(150, 50)">
+                        <!-- Группа секторов с поворотом -->
+                        <g transform="rotate(-22.5, 150, 150)">
+                            <!-- Здоровье, энергия -->
+                            <path d="M150,150 L150,85 A65,65 0 0,1 196.21,103.79 Z" fill="#6fd47e"/> <!-- Яркая часть (5/10) -->
+                            <path d="M150,85 L150,20 A130,130 0 0,1 242.43,57.57 L196.21,103.79 A65,65 0 0,0 150,85 Z" fill="#6fd47e" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Работа, бизнес -->
+                            <path d="M150,150 L196.21,103.79 A65,65 0 0,1 215,150 Z" fill="#4a90e2"/> <!-- Яркая часть (5/10) -->
+                            <path d="M196.21,103.79 L242.43,57.57 A130,130 0 0,1 280,150 L215,150 A65,65 0 0,0 196.21,103.79 Z" fill="#4a90e2" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Финансы -->
+                            <path d="M150,150 L215,150 A65,65 0 0,1 196.21,196.21 Z" fill="#3cb371"/> <!-- Яркая часть (5/10) -->
+                            <path d="M215,150 L280,150 A130,130 0 0,1 242.43,242.43 L196.21,196.21 A65,65 0 0,0 215,150 Z" fill="#3cb371" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Личные отношения, семья -->
+                            <path d="M150,150 L196.21,196.21 A65,65 0 0,1 150,215 Z" fill="#ff6666"/> <!-- Яркая часть (5/10) -->
+                            <path d="M196.21,196.21 L242.43,242.43 A130,130 0 0,1 150,280 L150,215 A65,65 0 0,0 196.21,196.21 Z" fill="#ff6666" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Творчество -->
+                            <path d="M150,150 L150,215 A65,65 0 0,1 103.79,196.21 Z" fill="#ffb347"/> <!-- Яркая часть (5/10) -->
+                            <path d="M150,215 L150,280 A130,130 0 0,1 57.57,242.43 L103.79,196.21 A65,65 0 0,0 150,215 Z" fill="#ffb347" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Личностный рост -->
+                            <path d="M150,150 L103.79,196.21 A65,65 0 0,1 85,150 Z" fill="#ffd700"/> <!-- Яркая часть (5/10) -->
+                            <path d="M103.79,196.21 L57.57,242.43 A130,130 0 0,1 20,150 L85,150 A65,65 0 0,0 103.79,196.21 Z" fill="#ffd700" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Отдых, развлечения -->
+                            <path d="M150,150 L85,150 A65,65 0 0,1 103.79,103.79 Z" fill="#87ceeb"/> <!-- Яркая часть (5/10) -->
+                            <path d="M85,150 L20,150 A130,130 0 0,1 57.57,57.57 L103.79,103.79 A65,65 0 0,0 85,150 Z" fill="#87ceeb" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            
+                            <!-- Друзья, окружение -->
+                            <path d="M150,150 L103.79,103.79 A65,65 0 0,1 150,85 Z" fill="#ff69b4"/> <!-- Яркая часть (5/10) -->
+                            <path d="M103.79,103.79 L57.57,57.57 A130,130 0 0,1 150,20 L150,85 A65,65 0 0,0 103.79,103.79 Z" fill="#ff69b4" fill-opacity="0.3"/> <!-- Бледная часть -->
+                        </g>
+
+                        <!-- Значения по центру секторов -->
+                        <g font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold">
+                            <text x="150" y="59" text-anchor="middle">5</text> <!-- 0° -->
+                            <text x="214" y="86" text-anchor="middle">5</text> <!-- 45° -->
+                            <text x="241" y="150" text-anchor="middle">5</text> <!-- 90° -->
+                            <text x="214" y="214" text-anchor="middle">5</text> <!-- 135° -->
+                            <text x="150" y="241" text-anchor="middle">5</text> <!-- 180° -->
+                            <text x="86" y="214" text-anchor="middle">5</text> <!-- 225° -->
+                            <text x="59" y="150" text-anchor="middle">5</text> <!-- 270° -->
+                            <text x="86" y="86" text-anchor="middle">5</text> <!-- 315° -->
+                        </g>
+
+                        <!-- Подписи к секторам -->
+                        <g font-size="14" font-family="Segoe UI, Arial" fill="#222">
+                            <!-- Здоровье, энергия -->
+                            <text transform="translate(150,0)" text-anchor="middle">
+                                <tspan x="0" y="-10" fill="#6fd47e">Здоровье,</tspan>
+                                <tspan x="0" y="10" fill="#6fd47e">энергия</tspan>
+                            </text>
+                            
+                            <!-- Работа, бизнес -->
+                            <text transform="translate(280,50)" text-anchor="start">
+                                <tspan x="10" y="0" fill="#4a90e2">Работа,</tspan>
+                                <tspan x="10" y="20" fill="#4a90e2">бизнес</tspan>
+                            </text>
+                            
+                            <!-- Финансы -->
+                            <text transform="translate(300,150)" text-anchor="start">
+                                <tspan x="0" y="5" fill="#3cb371">Финансы</tspan>
+                            </text>
+                            
+                            <!-- Личные отношения -->
+                            <text transform="translate(280,250)" text-anchor="start">
+                                <tspan x="-20" y="0" fill="#ff6666">Личные отношения,</tspan>
+                                <tspan x="0" y="20" fill="#ff6666">семья</tspan>
+                            </text>
+                            
+                            <!-- Творчество -->
+                            <text transform="translate(150,300)" text-anchor="middle">
+                                <tspan x="0" y="20" fill="#ffb347">Творчество</tspan>
+                            </text>
+                            
+                            <!-- Личностный рост -->
+                            <text transform="translate(20,250)" text-anchor="end">
+                                <tspan x="0" y="0" fill="#ffd700">Личностный</tspan>
+                                <tspan x="0" y="20" fill="#ffd700">рост</tspan>
+                            </text>
+                            
+                            <!-- Отдых -->
+                            <text transform="translate(0,150)" text-anchor="end">
+                                <tspan x="-10" y="5" fill="#87ceeb">Отдых,</tspan>
+                                <tspan x="-10" y="25" fill="#87ceeb">развлечения</tspan>
+                            </text>
+                            
+                            <!-- Друзья -->
+                            <text transform="translate(20,50)" text-anchor="end">
+                                <tspan x="0" y="0" fill="#ff69b4">Друзья,</tspan>
+                                <tspan x="0" y="20" fill="#ff69b4">окружение</tspan>
+                            </text>
+                        </g>
                     </g>
                 </svg>
-                <ul class="balance-wheel-labels">
-                    <li style="color:#6fd47e">Здоровье, энергия</li>
-                    <li style="color:#4a90e2">Работа, бизнес</li>
-                    <li style="color:#3cb371">Финансы</li>
-                    <li style="color:#ff6666">Личные отношения, семья</li>
-                    <li style="color:#ffb347">Творчество</li>
-                    <li style="color:#ffd700">Личностный рост</li>
-                    <li style="color:#87ceeb">Отдых, развлечения</li>
-                    <li style="color:#ff69b4">Друзья, окружение</li>
-                </ul>
             </div>
         </section>
         <!-- Здесь будет трекер целей -->
