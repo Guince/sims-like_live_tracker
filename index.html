@@ -3,19 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibe Coding</title>
+    <title>Vibe Coding — Трекер привычек</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Добро пожаловать на Vibe Coding!</h1>
+        <h1>Трекер привычек</h1>
     </header>
     <main>
-        <p>Это стартовая страница вашего сайта.</p>
+        <section class="habits-section">
+            <button id="addHabitBtn" class="primary-btn">+ Добавить привычку</button>
+            <ul id="habitsList" class="habits-list"></ul>
+        </section>
     </main>
     <footer>
         <p>&copy; 2024 Vibe Coding</p>
     </footer>
+
+    <!-- Модальное окно для добавления/редактирования привычки -->
+    <div id="habitModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <h2 id="modalTitle">Добавить привычку</h2>
+            <form id="habitForm">
+                <label for="habitName">Название привычки:</label>
+                <input type="text" id="habitName" name="habitName" required maxlength="50">
+                <input type="hidden" id="habitId">
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html> 

@@ -14,12 +14,140 @@ header {
 }
 
 main {
-    padding: 2rem 1rem;
-    max-width: 800px;
+    padding: 2rem 1rem 5rem 1rem;
+    max-width: 900px;
     margin: 0 auto;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.habits-section {
+    margin-top: 1rem;
+}
+
+.primary-btn {
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: background 0.2s;
+}
+.primary-btn:hover {
+    background: #357abd;
+}
+
+.habits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.habit-item {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+.habit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.habit-title {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.habit-actions button {
+    background: none;
+    border: none;
+    color: #4a90e2;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-left: 0.5rem;
+    transition: color 0.2s;
+}
+.habit-actions button:hover {
+    color: #d0021b;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
+    margin-top: 0.5rem;
+}
+.calendar-day {
+    width: 2.2rem;
+    height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: #eaeaea;
+    font-size: 0.95rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s, color 0.2s;
+}
+.calendar-day.completed {
+    background: #4a90e2;
+    color: #fff;
+}
+.calendar-day.today {
+    border: 2px solid #4a90e2;
+}
+.calendar-day.inactive {
+    background: #f4f4f4;
+    color: #bbb;
+    cursor: default;
+}
+
+/* Модальное окно */
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal.hidden {
+    display: none;
+}
+.modal-content {
+    background: #fff;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 8px;
+    min-width: 280px;
+    max-width: 90vw;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    position: relative;
+}
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close:hover {
+    color: #d0021b;
+}
+.modal-actions {
+    margin-top: 1.2rem;
+    text-align: right;
 }
 
 footer {
@@ -30,4 +158,19 @@ footer {
     position: fixed;
     width: 100%;
     bottom: 0;
+    left: 0;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1rem 0.2rem 5rem 0.2rem;
+    }
+    .calendar-day {
+        width: 1.7rem;
+        height: 1.7rem;
+        font-size: 0.8rem;
+    }
+    .modal-content {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+    }
 } 
