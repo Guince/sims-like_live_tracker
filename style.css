@@ -468,11 +468,82 @@ footer {
     box-shadow: 0 4px 12px rgba(49,93,171,0.1);
 }
 
+.life-area-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
 .life-area h3 {
-    color: #315dab;
+    margin: 0;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.life-area-slider {
+    width: 150px;
+}
+
+.slider-value {
+    font-weight: bold;
     font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0 1rem 0;
+    color: #299ed9;
+    min-width: 2ch;
+    text-align: right;
+}
+
+/* Custom Slider Styles */
+input[type=range].life-area-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+input[type=range].life-area-slider:focus {
+  outline: none;
+}
+
+input[type=range].life-area-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: #e0f7e9;
+  border-radius: 4px;
+  border: 1px solid #b8d14a;
+}
+
+input[type=range].life-area-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 2px solid #299ed9;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  margin-top: -7px;
+}
+
+input[type=range].life-area-slider::-moz-range-track {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  background: #e0f7e9;
+  border-radius: 4px;
+  border: 1px solid #b8d14a;
+}
+
+input[type=range].life-area-slider::-moz-range-thumb {
+  border: 2px solid #299ed9;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
 }
 
 .goals-list {
