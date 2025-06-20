@@ -1,6 +1,105 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sliders = document.querySelectorAll('.life-area-slider');
 
+    // --- Data Storage ---
+    const STORAGE_KEY = 'lifeTrackerGoals';
+    const SLIDERS_STORAGE_KEY = 'lifeTrackerSliders';
+
+    function saveGoals() {
+        const goalsData = {};
+        const lifeAreas = document.querySelectorAll('.life-area');
+        
+        lifeAreas.forEach((area, index) => {
+            const areaName = area.querySelector('h3').textContent;
+            const goals = [];
+            const goalItems = area.querySelectorAll('.goal-item');
+            
+            goalItems.forEach(item => {
+                const checkbox = item.querySelector('.goal-checkbox');
+                const text = item.querySelector('.goal-text').textContent;
+                goals.push({
+                    id: checkbox.id,
+                    text: text,
+                    completed: checkbox.checked
+                });
+            });
+            
+            goalsData[areaName] = goals;
+        });
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(goalsData));
+    }
+
+    function loadGoals() {
+        const savedGoals = localStorage.getItem(STORAGE_KEY);
+        if (!savedGoals) return;
+        
+        try {
+            const goalsData = JSON.parse(savedGoals);
+            const lifeAreas = document.querySelectorAll('.life-area');
+            
+            lifeAreas.forEach(area => {
+                const areaName = area.querySelector('h3').textContent;
+                const goals = goalsData[areaName] || [];
+                const goalItemsList = area.querySelector('.goal-items');
+                
+                // Clear existing goals
+                goalItemsList.innerHTML = '';
+                
+                // Load saved goals
+                goals.forEach(goal => {
+                    const newGoalLi = document.createElement('li');
+                    newGoalLi.className = 'goal-item';
+                    if (goal.completed) {
+                        newGoalLi.classList.add('completed');
+                    }
+                    
+                    const sanitizedText = goal.text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    
+                    newGoalLi.innerHTML = `
+                        <input type="checkbox" class="goal-checkbox" id="${goal.id}" ${goal.completed ? 'checked' : ''}>
+                        <label for="${goal.id}" class="goal-text">${sanitizedText}</label>
+                        <div class="goal-actions">
+                            <button class="goal-action-btn edit-btn" title="Редактировать">✏️</button>
+                            <button class="goal-action-btn delete-btn" title="Удалить">🗑️</button>
+                        </div>
+                    `;
+                    
+                    goalItemsList.appendChild(newGoalLi);
+                });
+            });
+        } catch (error) {
+            console.error('Error loading goals:', error);
+        }
+    }
+
+    function saveSliders() {
+        const slidersData = {};
+        sliders.forEach((slider, index) => {
+            slidersData[index] = slider.value;
+        });
+        localStorage.setItem(SLIDERS_STORAGE_KEY, JSON.stringify(slidersData));
+    }
+
+    function loadSliders() {
+        const savedSliders = localStorage.getItem(SLIDERS_STORAGE_KEY);
+        if (!savedSliders) return;
+        
+        try {
+            const slidersData = JSON.parse(savedSliders);
+            sliders.forEach((slider, index) => {
+                if (slidersData[index] !== undefined) {
+                    slider.value = slidersData[index];
+                    const valueSpan = slider.nextElementSibling;
+                    valueSpan.textContent = slidersData[index];
+                    updateWheelSector(index, slidersData[index]);
+                }
+            });
+        } catch (error) {
+            console.error('Error loading sliders:', error);
+        }
+    }
+
     // --- Wheel Update Logic ---
 
     const wheelConfig = {
@@ -78,6 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const value = event.target.value;
             valueSpan.textContent = value;
             updateWheelSector(index, value);
+            saveSliders(); // Save slider values
         });
     });
 
@@ -102,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         goalItemsList.appendChild(newGoalLi);
+        saveGoals(); // Save goals after adding
     }
     
     lifeAreasContainer.addEventListener('click', (event) => {
@@ -125,6 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('goal-checkbox') && !target.disabled) {
             const goalItem = target.closest('.goal-item');
             goalItem.classList.toggle('completed', target.checked);
+            saveGoals(); // Save goals after toggling
         }
 
         // Handle deleting a goal
@@ -132,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const goalItem = target.closest('.goal-item');
             if (confirm('Удалить эту цель?')) {
                 goalItem.remove();
+                saveGoals(); // Save goals after deleting
             }
         }
 
@@ -158,6 +261,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 goalItem.querySelector('.goal-actions').style.opacity = ''; // Restore opacity behavior
                 goalLabel.removeEventListener('blur', saveOnBlur);
                 goalLabel.removeEventListener('keydown', saveOnEnter);
+                saveGoals(); // Save goals after editing
             };
 
             goalLabel.addEventListener('keydown', saveOnEnter);
@@ -174,4 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
             addButton.click();
         }
     });
+
+    // --- Initialize data on page load ---
+    loadSliders();
+    loadGoals();
 }); 
