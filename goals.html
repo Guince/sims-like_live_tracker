@@ -30,49 +30,58 @@
                     <g transform="translate(150, 50)">
                         <!-- Группа секторов с поворотом -->
                         <g transform="rotate(-22.5, 150, 150)">
-                            <!-- Здоровье, энергия -->
-                            <path d="M150,150 L150,85 A65,65 0 0,1 196.21,103.79 Z" fill="#6fd47e"/> <!-- Яркая часть (5/10) -->
-                            <path d="M150,85 L150,20 A130,130 0 0,1 242.43,57.57 L196.21,103.79 A65,65 0 0,0 150,85 Z" fill="#6fd47e" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Работа, бизнес -->
-                            <path d="M150,150 L196.21,103.79 A65,65 0 0,1 215,150 Z" fill="#4a90e2"/> <!-- Яркая часть (5/10) -->
-                            <path d="M196.21,103.79 L242.43,57.57 A130,130 0 0,1 280,150 L215,150 A65,65 0 0,0 196.21,103.79 Z" fill="#4a90e2" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Финансы -->
-                            <path d="M150,150 L215,150 A65,65 0 0,1 196.21,196.21 Z" fill="#3cb371"/> <!-- Яркая часть (5/10) -->
-                            <path d="M215,150 L280,150 A130,130 0 0,1 242.43,242.43 L196.21,196.21 A65,65 0 0,0 215,150 Z" fill="#3cb371" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Личные отношения, семья -->
-                            <path d="M150,150 L196.21,196.21 A65,65 0 0,1 150,215 Z" fill="#ff6666"/> <!-- Яркая часть (5/10) -->
-                            <path d="M196.21,196.21 L242.43,242.43 A130,130 0 0,1 150,280 L150,215 A65,65 0 0,0 196.21,196.21 Z" fill="#ff6666" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Творчество -->
-                            <path d="M150,150 L150,215 A65,65 0 0,1 103.79,196.21 Z" fill="#ffb347"/> <!-- Яркая часть (5/10) -->
-                            <path d="M150,215 L150,280 A130,130 0 0,1 57.57,242.43 L103.79,196.21 A65,65 0 0,0 150,215 Z" fill="#ffb347" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Личностный рост -->
-                            <path d="M150,150 L103.79,196.21 A65,65 0 0,1 85,150 Z" fill="#ffd700"/> <!-- Яркая часть (5/10) -->
-                            <path d="M103.79,196.21 L57.57,242.43 A130,130 0 0,1 20,150 L85,150 A65,65 0 0,0 103.79,196.21 Z" fill="#ffd700" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Отдых, развлечения -->
-                            <path d="M150,150 L85,150 A65,65 0 0,1 103.79,103.79 Z" fill="#87ceeb"/> <!-- Яркая часть (5/10) -->
-                            <path d="M85,150 L20,150 A130,130 0 0,1 57.57,57.57 L103.79,103.79 A65,65 0 0,0 85,150 Z" fill="#87ceeb" fill-opacity="0.3"/> <!-- Бледная часть -->
-                            
-                            <!-- Друзья, окружение -->
-                            <path d="M150,150 L103.79,103.79 A65,65 0 0,1 150,85 Z" fill="#ff69b4"/> <!-- Яркая часть (5/10) -->
-                            <path d="M103.79,103.79 L57.57,57.57 A130,130 0 0,1 150,20 L150,85 A65,65 0 0,0 103.79,103.79 Z" fill="#ff69b4" fill-opacity="0.3"/> <!-- Бледная часть -->
+                            <!-- Сектор 0: Здоровье, энергия -->
+                            <g data-sector-id="0">
+                                <path class="sector-pale" fill="#6fd47e" fill-opacity="0.3" d="M 150 85 L 150 20 A 130 130 0 0 1 242.43 57.57 L 196.21 103.79 A 65 65 0 0 0 150 85 Z"></path>
+                                <path class="sector-bright" fill="#6fd47e" d="M 150 150 L 150 85 A 65 65 0 0 1 196.21 103.79 Z"></path>
+                            </g>
+                            <!-- Сектор 1: Работа, бизнес -->
+                            <g data-sector-id="1">
+                                <path class="sector-pale" fill="#4a90e2" fill-opacity="0.3" d="M 196.21 103.79 L 242.43 57.57 A 130 130 0 0 1 280 150 L 215 150 A 65 65 0 0 0 196.21 103.79 Z"></path>
+                                <path class="sector-bright" fill="#4a90e2" d="M 150 150 L 196.21 103.79 A 65 65 0 0 1 215 150 Z"></path>
+                            </g>
+                            <!-- Сектор 2: Финансы -->
+                            <g data-sector-id="2">
+                                <path class="sector-pale" fill="#3cb371" fill-opacity="0.3" d="M 215 150 L 280 150 A 130 130 0 0 1 242.43 242.43 L 196.21 196.21 A 65 65 0 0 0 215 150 Z"></path>
+                                <path class="sector-bright" fill="#3cb371" d="M 150 150 L 215 150 A 65 65 0 0 1 196.21 196.21 Z"></path>
+                            </g>
+                            <!-- Сектор 3: Личные отношения, семья -->
+                            <g data-sector-id="3">
+                                <path class="sector-pale" fill="#ff6666" fill-opacity="0.3" d="M 196.21 196.21 L 242.43 242.43 A 130 130 0 0 1 150 280 L 150 215 A 65 65 0 0 0 196.21 196.21 Z"></path>
+                                <path class="sector-bright" fill="#ff6666" d="M 150 150 L 196.21 196.21 A 65 65 0 0 1 150 215 Z"></path>
+                            </g>
+                            <!-- Сектор 4: Творчество -->
+                            <g data-sector-id="4">
+                                <path class="sector-pale" fill="#ffb347" fill-opacity="0.3" d="M 150 215 L 150 280 A 130 130 0 0 1 57.57 242.43 L 103.79 196.21 A 65 65 0 0 0 150 215 Z"></path>
+                                <path class="sector-bright" fill="#ffb347" d="M 150 150 L 150 215 A 65 65 0 0 1 103.79 196.21 Z"></path>
+                            </g>
+                            <!-- Сектор 5: Личностный рост -->
+                            <g data-sector-id="5">
+                                <path class="sector-pale" fill="#ffd700" fill-opacity="0.3" d="M 103.79 196.21 L 57.57 242.43 A 130 130 0 0 1 20 150 L 85 150 A 65 65 0 0 0 103.79 196.21 Z"></path>
+                                <path class="sector-bright" fill="#ffd700" d="M 150 150 L 103.79 196.21 A 65 65 0 0 1 85 150 Z"></path>
+                            </g>
+                            <!-- Сектор 6: Отдых, развлечения -->
+                            <g data-sector-id="6">
+                                <path class="sector-pale" fill="#87ceeb" fill-opacity="0.3" d="M 85 150 L 20 150 A 130 130 0 0 1 57.57 57.57 L 103.79 103.79 A 65 65 0 0 0 85 150 Z"></path>
+                                <path class="sector-bright" fill="#87ceeb" d="M 150 150 L 85 150 A 65 65 0 0 1 103.79 103.79 Z"></path>
+                            </g>
+                            <!-- Сектор 7: Друзья, окружение -->
+                            <g data-sector-id="7">
+                                <path class="sector-pale" fill="#ff69b4" fill-opacity="0.3" d="M 103.79 103.79 L 57.57 57.57 A 130 130 0 0 1 150 20 L 150 85 A 65 65 0 0 0 103.79 103.79 Z"></path>
+                                <path class="sector-bright" fill="#ff69b4" d="M 150 150 L 103.79 103.79 A 65 65 0 0 1 150 85 Z"></path>
+                            </g>
                         </g>
 
-                        <!-- Значения по центру секторов -->
-                        <g font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold">
-                            <text x="150" y="59" text-anchor="middle">5</text> <!-- 0° -->
-                            <text x="214" y="86" text-anchor="middle">5</text> <!-- 45° -->
-                            <text x="241" y="150" text-anchor="middle">5</text> <!-- 90° -->
-                            <text x="214" y="214" text-anchor="middle">5</text> <!-- 135° -->
-                            <text x="150" y="241" text-anchor="middle">5</text> <!-- 180° -->
-                            <text x="86" y="214" text-anchor="middle">5</text> <!-- 225° -->
-                            <text x="59" y="150" text-anchor="middle">5</text> <!-- 270° -->
-                            <text x="86" y="86" text-anchor="middle">5</text> <!-- 315° -->
+                        <!-- Значения по центру секторов (будут обновляться через JS) -->
+                        <g font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold" class="wheel-values">
+                            <text data-value-id="0" x="150" y="59" text-anchor="middle">5</text> <!-- 0° -->
+                            <text data-value-id="1" x="214" y="86" text-anchor="middle">5</text> <!-- 45° -->
+                            <text data-value-id="2" x="241" y="150" text-anchor="middle">5</text> <!-- 90° -->
+                            <text data-value-id="3" x="214" y="214" text-anchor="middle">5</text> <!-- 135° -->
+                            <text data-value-id="4" x="150" y="241" text-anchor="middle">5</text> <!-- 180° -->
+                            <text data-value-id="5" x="86" y="214" text-anchor="middle">5</text> <!-- 225° -->
+                            <text data-value-id="6" x="59" y="150" text-anchor="middle">5</text> <!-- 270° -->
+                            <text data-value-id="7" x="86" y="86" text-anchor="middle">5</text> <!-- 315° -->
                         </g>
 
                         <!-- Подписи к секторам -->
