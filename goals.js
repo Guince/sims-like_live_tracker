@@ -80,4 +80,98 @@ document.addEventListener('DOMContentLoaded', () => {
             updateWheelSector(index, value);
         });
     });
+
+    // --- Goals Logic ---
+    const lifeAreasContainer = document.querySelector('.life-areas');
+
+    function addGoal(areaElement, text) {
+        const goalItemsList = areaElement.querySelector('.goal-items');
+        const goalId = 'goal-' + Date.now() + Math.random().toString(36).substr(2, 9);
+        const newGoalLi = document.createElement('li');
+        newGoalLi.className = 'goal-item';
+        
+        const sanitizedText = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+        newGoalLi.innerHTML = `
+            <input type="checkbox" class="goal-checkbox" id="${goalId}">
+            <label for="${goalId}" class="goal-text">${sanitizedText}</label>
+            <div class="goal-actions">
+                <button class="goal-action-btn edit-btn" title="Редактировать">✏️</button>
+                <button class="goal-action-btn delete-btn" title="Удалить">🗑️</button>
+            </div>
+        `;
+        
+        goalItemsList.appendChild(newGoalLi);
+    }
+    
+    lifeAreasContainer.addEventListener('click', (event) => {
+        const target = event.target;
+
+        // Handle adding a goal
+        if (target.classList.contains('add-goal-btn')) {
+            const addGoalForm = target.closest('.add-goal-form');
+            const goalInput = addGoalForm.querySelector('.goal-input');
+            const goalText = goalInput.value.trim();
+            
+            if (goalText) {
+                const lifeArea = target.closest('.life-area');
+                addGoal(lifeArea, goalText);
+                goalInput.value = '';
+                goalInput.focus();
+            }
+        }
+        
+        // Handle toggling goal completion
+        if (target.classList.contains('goal-checkbox') && !target.disabled) {
+            const goalItem = target.closest('.goal-item');
+            goalItem.classList.toggle('completed', target.checked);
+        }
+
+        // Handle deleting a goal
+        if (target.classList.contains('delete-btn')) {
+            const goalItem = target.closest('.goal-item');
+            if (confirm('Удалить эту цель?')) {
+                goalItem.remove();
+            }
+        }
+
+        // Handle editing a goal
+        if (target.classList.contains('edit-btn')) {
+            const goalItem = target.closest('.goal-item');
+            const goalLabel = goalItem.querySelector('.goal-text');
+
+            goalLabel.contentEditable = true;
+            goalLabel.focus();
+            document.execCommand('selectAll', false, null); // Select all text
+
+            // Temporarily hide actions
+            goalItem.querySelector('.goal-actions').style.opacity = '0';
+
+            const saveOnEnter = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    goalLabel.blur();
+                }
+            };
+            const saveOnBlur = () => {
+                goalLabel.contentEditable = false;
+                goalItem.querySelector('.goal-actions').style.opacity = ''; // Restore opacity behavior
+                goalLabel.removeEventListener('blur', saveOnBlur);
+                goalLabel.removeEventListener('keydown', saveOnEnter);
+            };
+
+            goalLabel.addEventListener('keydown', saveOnEnter);
+            goalLabel.addEventListener('blur', saveOnBlur);
+        }
+    });
+
+    // Also handle Enter key press for adding goals
+    lifeAreasContainer.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter' && event.target.classList.contains('goal-input')) {
+            event.preventDefault();
+            const addGoalForm = event.target.closest('.add-goal-form');
+            const addButton = addGoalForm.querySelector('.add-goal-btn');
+            addButton.click();
+        }
+    });
 }); 

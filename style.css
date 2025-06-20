@@ -548,4 +548,166 @@ input[type=range].life-area-slider::-moz-range-thumb {
 
 .goals-list {
     min-height: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.goal-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Pushes the form down */
+}
+
+.goal-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eaf6fb;
+    position: relative; /* Для позиционирования кнопок */
+}
+
+.goal-item:hover .goal-actions {
+    opacity: 1;
+}
+
+.goal-item:last-child {
+    border-bottom: none;
+}
+
+.goal-text {
+    flex-grow: 1;
+    color: #333;
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding-right: 60px; /* Место для кнопок */
+}
+
+.goal-text[contenteditable="true"] {
+    background-color: #fff;
+    outline: 2px solid #299ed9;
+    border-radius: 4px;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    cursor: text;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 0.25rem;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    background: linear-gradient(90deg, #f4fff4 0%, #eaf6fb 100%);
+    padding: 0.25rem;
+    border-radius: 8px;
+}
+
+.goal-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0.2rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    line-height: 1;
+}
+
+.goal-action-btn:hover {
+    background-color: #e0f7e9;
+}
+
+.goal-item.completed .goal-text {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.goal-checkbox:not(:disabled) {
+    cursor: pointer;
+}
+
+.goal-checkbox:not(:disabled):hover {
+    border-color: #66bb46;
+}
+
+.add-goal-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.goal-input {
+    flex-grow: 1;
+    border: 2px solid #b8d14a;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    background: #f4fff4;
+    transition: border-color 0.2s;
+}
+
+.goal-input:focus {
+    outline: none;
+    border-color: #299ed9;
+}
+
+.add-goal-btn {
+    background: linear-gradient(90deg, #b8d14a 0%, #299ed9 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.add-goal-btn:hover {
+    background: linear-gradient(90deg, #66bb46 0%, #315dab 100%);
+    transform: scale(1.05);
+}
+
+.goal-checkbox {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #f4f4f4;
+    margin: 0;
+    font: inherit;
+    color: #bbb;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    transform: translateY(0);
+    display: grid;
+    place-content: center;
+    cursor: not-allowed;
+    flex-shrink: 0;
+}
+
+.goal-checkbox::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #299ed9;
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.goal-checkbox:checked::before {
+    transform: scale(1);
 } 
