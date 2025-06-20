@@ -131,6 +131,33 @@ main {
     .balance-wheel-labels li {
         min-width: 90px;
     }
+    .goals-section {
+        margin: 1.5rem 0;
+        padding: 0 0.5rem;
+    }
+    .goals-section h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+    .goals-container {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    .life-areas {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .life-area {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    .life-area h3 {
+        font-size: 1rem;
+        margin-bottom: 0.8rem;
+    }
 }
 
 @media (max-width: 400px) {
@@ -398,4 +425,56 @@ footer {
 .balance-wheel-labels li {
     min-width: 120px;
     text-align: left;
+}
+
+.goals-section {
+    margin: 2.5rem 0;
+    padding: 0 1rem;
+}
+
+.goals-section h2 {
+    font-size: 1.5rem;
+    color: #299ed9;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+
+.goals-container {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(49,93,171,0.07);
+    min-height: 200px; /* Временно, чтобы блок был виден */
+}
+
+.life-areas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.life-area {
+    background: linear-gradient(90deg, #f4fff4 0%, #eaf6fb 100%);
+    border: 2px solid;
+    border-radius: 16px;
+    padding: 1.2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.life-area:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(49,93,171,0.1);
+}
+
+.life-area h3 {
+    color: #315dab;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+}
+
+.goals-list {
+    min-height: 100px;
 } 
