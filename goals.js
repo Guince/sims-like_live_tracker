@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Data Storage ---
     const STORAGE_KEY = 'lifeTrackerGoals';
     const SLIDERS_STORAGE_KEY = 'lifeTrackerSliders';
+    const AREA_NAMES_STORAGE_KEY = 'lifeTrackerAreaNames';
 
     function saveGoals() {
         const goalsData = {};
@@ -181,6 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Area Names Click Handler ---
+    document.addEventListener('click', (event) => {
+        if (event.target.tagName === 'H3' && event.target.closest('.life-area-header')) {
+            makeAreaNameEditable(event.target);
+        }
+    });
+
     // --- Goals Logic ---
     const lifeAreasContainer = document.querySelector('.life-areas');
 
@@ -279,7 +287,117 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- Area Names Management ---
+    function saveAreaNames() {
+        const areaNamesData = {};
+        const lifeAreas = document.querySelectorAll('.life-area');
+        
+        lifeAreas.forEach((area, index) => {
+            const areaName = area.querySelector('h3').textContent;
+            areaNamesData[index] = areaName;
+        });
+        
+        localStorage.setItem(AREA_NAMES_STORAGE_KEY, JSON.stringify(areaNamesData));
+    }
+
+    function loadAreaNames() {
+        const savedAreaNames = localStorage.getItem(AREA_NAMES_STORAGE_KEY);
+        if (!savedAreaNames) return;
+        
+        try {
+            const areaNamesData = JSON.parse(savedAreaNames);
+            const lifeAreas = document.querySelectorAll('.life-area');
+            
+            lifeAreas.forEach((area, index) => {
+                if (areaNamesData[index]) {
+                    const areaTitle = area.querySelector('h3');
+                    areaTitle.textContent = areaNamesData[index];
+                    updateWheelLabel(index, areaNamesData[index]);
+                }
+            });
+        } catch (error) {
+            console.error('Error loading area names:', error);
+        }
+    }
+
+    // --- Wheel Labels Update ---
+    function updateWheelLabel(sectorIndex, newName) {
+        // Массив селекторов для подписей колеса баланса (в порядке секторов)
+        const wheelLabelSelectors = [
+            'text[transform="translate(150,0)"] tspan', // Здоровье, энергия (0°)
+            'text[transform="translate(280,50)"] tspan', // Работа, бизнес (45°)
+            'text[transform="translate(300,150)"] tspan', // Финансы (90°)
+            'text[transform="translate(280,250)"] tspan', // Личные отношения (135°)
+            'text[transform="translate(150,300)"] tspan', // Творчество (180°)
+            'text[transform="translate(20,250)"] tspan', // Личностный рост (225°)
+            'text[transform="translate(0,150)"] tspan', // Отдых (270°)
+            'text[transform="translate(20,50)"] tspan' // Друзья (315°)
+        ];
+
+        const labelElement = document.querySelector(wheelLabelSelectors[sectorIndex]);
+        if (labelElement) {
+            labelElement.textContent = newName;
+        }
+    }
+
+    // --- Area Names Editing ---
+    function makeAreaNameEditable(areaTitle) {
+        const originalText = areaTitle.textContent;
+        const lifeArea = areaTitle.closest('.life-area');
+        const lifeAreas = document.querySelectorAll('.life-area');
+        const areaIndex = Array.from(lifeAreas).indexOf(lifeArea);
+        
+        areaTitle.contentEditable = true;
+        areaTitle.focus();
+        document.execCommand('selectAll', false, null);
+        
+        // Add visual feedback
+        areaTitle.style.backgroundColor = '#f0f8ff';
+        areaTitle.style.borderRadius = '4px';
+        areaTitle.style.padding = '2px 4px';
+        areaTitle.style.outline = '2px solid #299ed9';
+        
+        const saveOnEnter = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                areaTitle.blur();
+            }
+        };
+        
+        const saveOnBlur = () => {
+            const newText = areaTitle.textContent.trim();
+            if (newText && newText !== originalText) {
+                areaTitle.textContent = newText;
+                updateWheelLabel(areaIndex, newText);
+                saveAreaNames();
+            } else {
+                areaTitle.textContent = originalText;
+            }
+            
+            // Remove visual feedback
+            areaTitle.style.backgroundColor = '';
+            areaTitle.style.borderRadius = '';
+            areaTitle.style.padding = '';
+            areaTitle.style.outline = '';
+            
+            areaTitle.contentEditable = false;
+            areaTitle.removeEventListener('blur', saveOnBlur);
+            areaTitle.removeEventListener('keydown', saveOnEnter);
+        };
+        
+        areaTitle.addEventListener('keydown', saveOnEnter);
+        areaTitle.addEventListener('blur', saveOnBlur);
+    }
+
     // --- Initialize data on page load ---
     loadSliders();
     loadGoals();
+    loadAreaNames();
+    
+    // Initialize wheel labels with current area names
+    const lifeAreas = document.querySelectorAll('.life-area');
+    lifeAreas.forEach((area, index) => {
+        const areaName = area.querySelector('h3').textContent;
+        updateWheelLabel(index, areaName);
+    });
 }); 

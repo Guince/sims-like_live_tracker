@@ -169,6 +169,20 @@ main {
     .life-area h3 {
         font-size: 1rem;
         margin-bottom: 0.8rem;
+        width: 200px;
+        min-width: 200px;
+    }
+    .life-area-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+    .slider-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .life-area-slider {
+        width: 120px;
     }
 }
 
@@ -537,7 +551,28 @@ footer {
 }
 
 .life-area h3 {
-    margin: 0;
+    margin: 0 0 1rem 0;
+    color: #299ed9;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    padding: 2px 4px;
+    width: 280px;
+    min-width: 280px;
+    flex-shrink: 0;
+}
+
+.life-area h3:hover {
+    background-color: rgba(41, 158, 217, 0.1);
+}
+
+.life-area h3[contenteditable="true"] {
+    background-color: #f0f8ff !important;
+    outline: 2px solid #299ed9 !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
 }
 
 .slider-container {
