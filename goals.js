@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         centerY: 150,
         outerRadius: 130,
         sectorAngle: 45, // 360 / 8
+        valueRadius: 91, // Радиус для размещения цифр (изменено с 65 на 91)
     };
 
     function polarToCartesian(radius, angleInDegrees) {
@@ -116,6 +117,43 @@ document.addEventListener('DOMContentLoaded', () => {
             x: wheelConfig.centerX + (radius * Math.cos(angleInRadians)),
             y: wheelConfig.centerY + (radius * Math.sin(angleInRadians)),
         };
+    }
+
+    function getValuePosition(sectorIndex) {
+        // Угол в центре сектора (между радиусами)
+        const centerAngle = sectorIndex * wheelConfig.sectorAngle + wheelConfig.sectorAngle / 2;
+        const position = polarToCartesian(wheelConfig.valueRadius, centerAngle);
+        
+        // Добавляем информацию о повороте для горизонтального расположения
+        return {
+            x: position.x,
+            y: position.y,
+            angle: centerAngle
+        };
+    }
+
+    function updateValuePosition(sectorIndex) {
+        const sectorGroup = document.querySelector(`[data-sector-id="${sectorIndex}"]`);
+        if (!sectorGroup) return;
+
+        const valueText = sectorGroup.querySelector('.sector-value');
+        if (!valueText) return;
+
+        const position = getValuePosition(sectorIndex);
+        valueText.setAttribute('x', position.x);
+        valueText.setAttribute('y', position.y);
+        
+        // Компенсируем поворот секторов для горизонтального расположения цифр
+        // Весь блок секторов повернут на -22.5°, поэтому компенсируем это
+        const compensationAngle = 22.5;
+        valueText.setAttribute('transform', `rotate(${compensationAngle} ${position.x} ${position.y})`);
+    }
+
+    function updateAllValuePositions() {
+        const sectors = document.querySelectorAll('.life-sphere');
+        sectors.forEach((sector, index) => {
+            updateValuePosition(index);
+        });
     }
 
     function describeSector(sectorIndex, value) {
@@ -155,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const brightPath = sectorGroup.querySelector('.sector-bright');
         const palePath = sectorGroup.querySelector('.sector-pale');
-        const valueText = document.querySelector(`.wheel-values [data-value-id="${index}"]`);
+        const valueText = sectorGroup.querySelector('.sector-value');
 
         const paths = describeSector(index, value);
         
@@ -164,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (valueText) {
             valueText.textContent = value;
+            updateValuePosition(index);
         }
     }
 
@@ -322,19 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Wheel Labels Update ---
     function updateWheelLabel(sectorIndex, newName) {
-        // Массив селекторов для подписей колеса баланса (в порядке секторов)
-        const wheelLabelSelectors = [
-            'text[transform="translate(150,0)"] tspan', // Здоровье, энергия (0°)
-            'text[transform="translate(280,50)"] tspan', // Работа, бизнес (45°)
-            'text[transform="translate(300,150)"] tspan', // Финансы (90°)
-            'text[transform="translate(280,250)"] tspan', // Личные отношения (135°)
-            'text[transform="translate(150,300)"] tspan', // Творчество (180°)
-            'text[transform="translate(20,250)"] tspan', // Личностный рост (225°)
-            'text[transform="translate(0,150)"] tspan', // Отдых (270°)
-            'text[transform="translate(20,50)"] tspan' // Друзья (315°)
-        ];
-
-        const labelElement = document.querySelector(wheelLabelSelectors[sectorIndex]);
+        const labelElement = document.querySelector(`[data-label-id="${sectorIndex}"] tspan`);
         if (labelElement) {
             labelElement.textContent = newName;
         }
@@ -400,4 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const areaName = area.querySelector('h3').textContent;
         updateWheelLabel(index, areaName);
     });
+    
+    // Initialize value positions
+    updateAllValuePositions();
 }); 
