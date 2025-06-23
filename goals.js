@@ -226,6 +226,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target.tagName === 'H3' && event.target.closest('.life-area-header')) {
             makeAreaNameEditable(event.target);
         }
+        
+        // Handle delete area button
+        if (event.target.classList.contains('delete-area-btn')) {
+            const lifeArea = event.target.closest('.life-area');
+            const lifeAreas = document.querySelectorAll('.life-area');
+            const areaIndex = Array.from(lifeAreas).indexOf(lifeArea);
+            
+            if (confirm('Удалить эту сферу жизни? Это действие нельзя отменить.')) {
+                deleteLifeArea(areaIndex);
+            }
+        }
     });
 
     // --- Goals Logic ---
@@ -360,10 +371,76 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Wheel Labels Update ---
+    // Функция для разбиения длинного текста на строки
+    function splitTextIntoLines(text, maxLength = 20) {
+        if (text.length <= maxLength) {
+            return [text];
+        }
+        
+        // Разбиваем по запятым и пробелам
+        const words = text.split(/[,\s]+/);
+        const lines = [];
+        let currentLine = '';
+        
+        words.forEach(word => {
+            if (currentLine.length + word.length <= maxLength) {
+                currentLine += (currentLine ? ' ' : '') + word;
+            } else {
+                if (currentLine) {
+                    lines.push(currentLine);
+                }
+                currentLine = word;
+            }
+        });
+        
+        if (currentLine) {
+            lines.push(currentLine);
+        }
+        
+        return lines;
+    }
+
+    // Функция для создания многострочного текста в SVG
+    function createMultilineText(text, color, textAnchor) {
+        const lines = splitTextIntoLines(text);
+        const lineHeight = 16; // Высота строки
+        
+        let tspanElements = '';
+        lines.forEach((line, index) => {
+            const y = index * lineHeight;
+            tspanElements += `<tspan x="0" y="${y}" fill="${color}">${line}</tspan>`;
+        });
+        
+        return tspanElements;
+    }
+
     function updateWheelLabel(sectorIndex, newName) {
-        const labelElement = document.querySelector(`[data-label-id="${sectorIndex}"] tspan`);
+        const labelElement = document.querySelector(`[data-label-id="${sectorIndex}"]`);
         if (labelElement) {
-            labelElement.textContent = newName;
+            // Получаем цвет из существующего tspan
+            const existingTspan = labelElement.querySelector('tspan');
+            const color = existingTspan ? existingTspan.getAttribute('fill') : '#222';
+            
+            // Определяем text-anchor
+            const sectorCenterAngle = sectorIndex * wheelConfig.sectorAngle + wheelConfig.sectorAngle / 2;
+            const adjustedAngle = sectorCenterAngle - 22.5;
+            
+            let textAnchor = 'middle';
+            if (adjustedAngle > 45 && adjustedAngle < 135) {
+                textAnchor = 'start';
+            } else if (adjustedAngle > 225 && adjustedAngle < 315) {
+                textAnchor = 'end';
+            }
+            
+            // Создаем многострочный текст
+            const multilineContent = createMultilineText(newName, color, textAnchor);
+            labelElement.innerHTML = multilineContent;
+            
+            // Пересчитываем позицию надписи
+            const position = getLabelPosition(sectorIndex, textAnchor, newName);
+            
+            labelElement.setAttribute('transform', `translate(${position.x}, ${position.y})`);
+            labelElement.setAttribute('text-anchor', textAnchor);
         }
     }
 
@@ -416,10 +493,254 @@ document.addEventListener('DOMContentLoaded', () => {
         areaTitle.addEventListener('blur', saveOnBlur);
     }
 
+    // --- Life Area Management ---
+    function deleteLifeArea(areaIndex) {
+        // Удаляем блок из HTML
+        const lifeAreas = document.querySelectorAll('.life-area');
+        const areaToDelete = lifeAreas[areaIndex];
+        if (areaToDelete) {
+            areaToDelete.remove();
+        }
+        
+        // Удаляем сектор из колеса баланса
+        const sectorToDelete = document.querySelector(`[data-sector-id="${areaIndex}"]`);
+        if (sectorToDelete) {
+            sectorToDelete.remove();
+        }
+        
+        // Удаляем подпись из колеса баланса
+        const labelToDelete = document.querySelector(`[data-label-id="${areaIndex}"]`);
+        if (labelToDelete) {
+            labelToDelete.remove();
+        }
+        
+        // Пересчитываем оставшиеся секторы
+        recalculateWheel();
+        
+        // Обновляем данные в LocalStorage
+        updateStorageAfterDeletion(areaIndex);
+    }
+
+    function recalculateWheel() {
+        const remainingSectors = document.querySelectorAll('.life-sphere');
+        const totalSectors = remainingSectors.length;
+        
+        if (totalSectors === 0) return;
+        
+        // Обновляем конфигурацию колеса
+        wheelConfig.sectorAngle = 360 / totalSectors;
+        
+        // Пересчитываем каждый сектор
+        remainingSectors.forEach((sector, newIndex) => {
+            const oldIndex = parseInt(sector.getAttribute('data-sector-id'));
+            
+            // Обновляем data-sector-id
+            sector.setAttribute('data-sector-id', newIndex);
+            
+            // Обновляем сектор с новыми углами
+            const slider = document.querySelectorAll('.life-area-slider')[newIndex];
+            const value = slider ? slider.value : 5;
+            updateWheelSector(newIndex, value);
+            
+            // Обновляем позицию цифры
+            updateValuePosition(newIndex);
+        });
+        
+        // Обновляем подписи
+        updateLabelsAfterDeletion();
+    }
+
+    function getLabelPosition(sectorIndex, textAnchor, text = '') {
+        const sectorCenterAngle = sectorIndex * wheelConfig.sectorAngle + wheelConfig.sectorAngle / 2;
+        const adjustedAngle = sectorCenterAngle - 22.5;
+        
+        // Базовый радиус для размещения надписей
+        const baseRadius = wheelConfig.outerRadius + 50;
+        
+        // Рассчитываем базовую позицию
+        const basePosition = polarToCartesian(baseRadius, adjustedAngle);
+        
+        // Корректируем позицию в зависимости от text-anchor и направления
+        // Цель: ближайшая буква к колесу должна быть на расстоянии baseRadius
+        let offsetX = 0;
+        let offsetY = 0;
+        
+        if (textAnchor === 'start') {
+            // Для правой стороны - текст начинается справа от позиции
+            // Нужно сдвинуть позицию влево, чтобы ближайшая буква была на нужном расстоянии
+            offsetX = -15;
+        } else if (textAnchor === 'end') {
+            // Для левой стороны - текст заканчивается слева от позиции
+            // Нужно сдвинуть позицию вправо, чтобы ближайшая буква была на нужном расстоянии
+            offsetX = 15;
+        }
+        // Для 'middle' - центр текста, смещение не нужно
+        
+        // Корректируем позицию по Y для многострочного текста
+        if (text) {
+            const lines = splitTextIntoLines(text);
+            if (lines.length > 1) {
+                // Центрируем многострочный текст по вертикали
+                const totalHeight = (lines.length - 1) * 16; // 16px - высота строки
+                offsetY = -totalHeight / 2;
+            }
+        }
+        
+        return {
+            x: basePosition.x + offsetX,
+            y: basePosition.y + offsetY,
+            angle: adjustedAngle
+        };
+    }
+
+    function updateLabelsAfterDeletion() {
+        const remainingLabels = document.querySelectorAll('[data-label-id]');
+        const totalLabels = remainingLabels.length;
+        
+        if (totalLabels === 0) return;
+        
+        remainingLabels.forEach((label, newIndex) => {
+            const oldIndex = parseInt(label.getAttribute('data-label-id'));
+            label.setAttribute('data-label-id', newIndex);
+            
+            // Определяем text-anchor в зависимости от угла
+            const sectorCenterAngle = newIndex * wheelConfig.sectorAngle + wheelConfig.sectorAngle / 2;
+            const adjustedAngle = sectorCenterAngle - 22.5;
+            
+            let textAnchor = 'middle';
+            if (adjustedAngle > 45 && adjustedAngle < 135) {
+                textAnchor = 'start'; // Правая сторона
+            } else if (adjustedAngle > 225 && adjustedAngle < 315) {
+                textAnchor = 'end'; // Левая сторона
+            }
+            
+            // Получаем текст и цвет из существующего tspan
+            const existingTspan = label.querySelector('tspan');
+            const text = existingTspan ? existingTspan.textContent : '';
+            const color = existingTspan ? existingTspan.getAttribute('fill') : '#222';
+            
+            // Создаем многострочный текст
+            const multilineContent = createMultilineText(text, color, textAnchor);
+            label.innerHTML = multilineContent;
+            
+            // Рассчитываем позицию надписи с учетом text-anchor и многострочности
+            const position = getLabelPosition(newIndex, textAnchor, text);
+            
+            // Применяем трансформацию
+            label.setAttribute('transform', `translate(${position.x}, ${position.y})`);
+            label.setAttribute('text-anchor', textAnchor);
+        });
+    }
+
+    function updateStorageAfterDeletion(deletedIndex) {
+        // Обновляем сохраненные названия сфер
+        const savedAreaNames = localStorage.getItem(AREA_NAMES_STORAGE_KEY);
+        if (savedAreaNames) {
+            try {
+                const areaNamesData = JSON.parse(savedAreaNames);
+                const newAreaNamesData = {};
+                
+                Object.keys(areaNamesData).forEach(oldIndex => {
+                    const oldIndexNum = parseInt(oldIndex);
+                    if (oldIndexNum < deletedIndex) {
+                        newAreaNamesData[oldIndexNum] = areaNamesData[oldIndexNum];
+                    } else if (oldIndexNum > deletedIndex) {
+                        newAreaNamesData[oldIndexNum - 1] = areaNamesData[oldIndexNum];
+                    }
+                });
+                
+                localStorage.setItem(AREA_NAMES_STORAGE_KEY, JSON.stringify(newAreaNamesData));
+            } catch (error) {
+                console.error('Error updating area names storage:', error);
+            }
+        }
+        
+        // Обновляем сохраненные значения слайдеров
+        const savedSliders = localStorage.getItem(SLIDERS_STORAGE_KEY);
+        if (savedSliders) {
+            try {
+                const slidersData = JSON.parse(savedSliders);
+                const newSlidersData = {};
+                
+                Object.keys(slidersData).forEach(oldIndex => {
+                    const oldIndexNum = parseInt(oldIndex);
+                    if (oldIndexNum < deletedIndex) {
+                        newSlidersData[oldIndexNum] = slidersData[oldIndexNum];
+                    } else if (oldIndexNum > deletedIndex) {
+                        newSlidersData[oldIndexNum - 1] = slidersData[oldIndexNum];
+                    }
+                });
+                
+                localStorage.setItem(SLIDERS_STORAGE_KEY, JSON.stringify(newSlidersData));
+            } catch (error) {
+                console.error('Error updating sliders storage:', error);
+            }
+        }
+        
+        // Обновляем сохраненные цели
+        const savedGoals = localStorage.getItem(STORAGE_KEY);
+        if (savedGoals) {
+            try {
+                const goalsData = JSON.parse(savedGoals);
+                const newGoalsData = {};
+                
+                Object.keys(goalsData).forEach(oldIndex => {
+                    const oldIndexNum = parseInt(oldIndex);
+                    if (oldIndexNum < deletedIndex) {
+                        newGoalsData[oldIndexNum] = goalsData[oldIndexNum];
+                    } else if (oldIndexNum > deletedIndex) {
+                        newGoalsData[oldIndexNum - 1] = goalsData[oldIndexNum];
+                    }
+                });
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(newGoalsData));
+            } catch (error) {
+                console.error('Error updating goals storage:', error);
+            }
+        }
+    }
+
     // --- Initialize data on page load ---
     loadSliders();
     loadGoals();
     loadAreaNames();
+    
+    // Функция для инициализации позиций надписей
+    function initializeLabelPositions() {
+        const labels = document.querySelectorAll('[data-label-id]');
+        const totalLabels = labels.length;
+        
+        if (totalLabels === 0) return;
+        
+        // Обновляем конфигурацию колеса для правильного расчета
+        wheelConfig.sectorAngle = 360 / totalLabels;
+        
+        labels.forEach((label, index) => {
+            const sectorCenterAngle = index * wheelConfig.sectorAngle + wheelConfig.sectorAngle / 2;
+            const adjustedAngle = sectorCenterAngle - 22.5;
+            
+            let textAnchor = 'middle';
+            if (adjustedAngle > 45 && adjustedAngle < 135) {
+                textAnchor = 'start';
+            } else if (adjustedAngle > 225 && adjustedAngle < 315) {
+                textAnchor = 'end';
+            }
+            
+            // Получаем текст и цвет из существующего tspan
+            const existingTspan = label.querySelector('tspan');
+            const text = existingTspan ? existingTspan.textContent : '';
+            const color = existingTspan ? existingTspan.getAttribute('fill') : '#222';
+            
+            // Создаем многострочный текст
+            const multilineContent = createMultilineText(text, color, textAnchor);
+            label.innerHTML = multilineContent;
+            
+            const position = getLabelPosition(index, textAnchor, text);
+            
+            label.setAttribute('transform', `translate(${position.x}, ${position.y})`);
+            label.setAttribute('text-anchor', textAnchor);
+        });
+    }
     
     // Initialize wheel labels with current area names
     const lifeAreas = document.querySelectorAll('.life-area');
@@ -427,6 +748,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const areaName = area.querySelector('h3').textContent;
         updateWheelLabel(index, areaName);
     });
+    
+    // Initialize label positions
+    initializeLabelPositions();
     
     // Initialize value positions
     updateAllValuePositions();

@@ -176,6 +176,8 @@ main {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.8rem;
+        position: relative;
+        padding-right: 35px; /* Место для кнопки удаления на мобильных */
     }
     .slider-container {
         width: 100%;
@@ -183,6 +185,15 @@ main {
     }
     .life-area-slider {
         width: 120px;
+    }
+    .delete-area-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: none;
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
     }
 }
 
@@ -548,6 +559,8 @@ footer {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    position: relative;
+    padding-right: 40px; /* Место для кнопки удаления */
 }
 
 .life-area h3 {
@@ -579,6 +592,7 @@ footer {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-left: auto; /* Прижимаем к правому краю, но с учетом отступа */
 }
 
 .life-area-slider {
@@ -806,4 +820,40 @@ input[type=range].life-area-slider::-moz-range-thumb {
 
 .goal-checkbox:checked::before {
     transform: scale(1);
+}
+
+.delete-area-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.3rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #ff6666;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.life-area:hover .delete-area-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+.delete-area-btn:hover {
+    background-color: #ff6666;
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 102, 102, 0.3);
 } 
