@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEY = 'lifeTrackerGoals';
     const SLIDERS_STORAGE_KEY = 'lifeTrackerSliders';
     const AREA_NAMES_STORAGE_KEY = 'lifeTrackerAreaNames';
+    const AREAS_STRUCTURE_KEY = 'lifeTrackerAreasStructure';
 
     // --- Sims 4 Color Palette ---
     const SIMS4_COLORS = [
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(goalsData));
+        saveAreasStructure(); // Also save structure when goals change
     }
 
     function loadGoals() {
@@ -100,6 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slidersData[index] = slider.value;
         });
         localStorage.setItem(SLIDERS_STORAGE_KEY, JSON.stringify(slidersData));
+        saveAreasStructure(); // Also save structure when sliders change
     }
 
     function loadSliders() {
@@ -371,6 +374,71 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(AREA_NAMES_STORAGE_KEY, JSON.stringify(areaNamesData));
     }
 
+    function saveAreasStructure() {
+        const areasStructure = [];
+        const lifeAreas = document.querySelectorAll('.life-area');
+        
+        lifeAreas.forEach((area, index) => {
+            const areaName = area.querySelector('h3').textContent;
+            const sliderValue = area.querySelector('.life-area-slider').value;
+            const borderColor = area.style.borderColor;
+            
+            areasStructure.push({
+                name: areaName,
+                sliderValue: sliderValue,
+                color: borderColor
+            });
+        });
+        
+        localStorage.setItem(AREAS_STRUCTURE_KEY, JSON.stringify(areasStructure));
+    }
+
+    function loadAreasStructure() {
+        const savedStructure = localStorage.getItem(AREAS_STRUCTURE_KEY);
+        if (!savedStructure) return false;
+        
+        try {
+            const areasStructure = JSON.parse(savedStructure);
+            const lifeAreasContainer = document.querySelector('.life-areas');
+            
+            // Clear existing areas
+            lifeAreasContainer.innerHTML = '';
+            
+            // Recreate areas from saved structure
+            areasStructure.forEach((areaData, index) => {
+                const areaHTML = `
+                    <div class="life-area" style="border-color: ${areaData.color}">
+                        <div class="life-area-header">
+                            <h3>${areaData.name}</h3>
+                            <div class="slider-container">
+                                <input type="range" min="1" max="10" value="${areaData.sliderValue}" class="life-area-slider">
+                                <span class="slider-value">${areaData.sliderValue}</span>
+                            </div>
+                            <button class="delete-area-btn" title="Удалить сферу жизни">🗑️</button>
+                        </div>
+                        <div class="goals-list">
+                            <ul class="goal-items">
+                                <!-- Здесь будут цели для этой сферы -->
+                            </ul>
+                            <div class="add-goal-form">
+                                <input type="checkbox" class="goal-checkbox" disabled>
+                                <input type="text" class="goal-input" placeholder="Новая цель...">
+                                <button class="add-goal-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                lifeAreasContainer.insertAdjacentHTML('beforeend', areaHTML);
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('Error loading areas structure:', error);
+            return false;
+        }
+    }
+
     function loadAreaNames() {
         const savedAreaNames = localStorage.getItem(AREA_NAMES_STORAGE_KEY);
         if (!savedAreaNames) return;
@@ -496,6 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 areaTitle.textContent = newText;
                 updateWheelLabel(areaIndex, newText);
                 saveAreaNames();
+                saveAreasStructure();
             } else {
                 areaTitle.textContent = originalText;
             }
@@ -541,6 +610,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Обновляем данные в LocalStorage
         updateStorageAfterDeletion(areaIndex);
+        
+        // Сохраняем обновленную структуру
+        saveAreasStructure();
         
         // Переиндексируем оставшиеся сферы
         reindexRemainingAreas();
@@ -601,6 +673,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+        
+        // Save updated structure after reindexing
+        saveAreasStructure();
     }
 
     function recalculateWheel() {
@@ -818,9 +893,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Initialize data on page load ---
+    // First load areas structure if it exists
+    const structureLoaded = loadAreasStructure();
+    
+    // Then load other data
     loadSliders();
     loadGoals();
-    loadAreaNames();
+    if (!structureLoaded) {
+        loadAreaNames();
+    }
     
     // Initialize wheel labels with current area names
     const lifeAreas = document.querySelectorAll('.life-area');
@@ -887,6 +968,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveGoals();
         saveSliders();
         saveAreaNames();
+        saveAreasStructure();
     }
 
     function addWheelSector(sectorIndex, color) {
