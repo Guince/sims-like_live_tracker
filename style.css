@@ -526,11 +526,47 @@ footer {
 }
 
 .goals-container {
-    background: #fff;
+    padding: 0.8rem;
+    border-radius: 10px;
+}
+
+.add-area-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.add-area-btn {
+    background: linear-gradient(135deg, #299ed9 0%, #66bb46 100%);
+    color: #fff;
+    border: none;
     border-radius: 12px;
-    padding: 1.2rem;
-    box-shadow: 0 2px 12px rgba(49,93,171,0.07);
-    min-height: 150px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(49,93,171,0.2);
+}
+
+.add-area-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(49,93,171,0.3);
+    background: linear-gradient(135deg, #1e8bc3 0%, #5aa839 100%);
+}
+
+.add-area-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(49,93,171,0.2);
+}
+
+.add-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .life-areas {

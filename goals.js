@@ -6,6 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const SLIDERS_STORAGE_KEY = 'lifeTrackerSliders';
     const AREA_NAMES_STORAGE_KEY = 'lifeTrackerAreaNames';
 
+    // --- Sims 4 Color Palette ---
+    const SIMS4_COLORS = [
+        '#6fd47e', // Здоровье, энергия
+        '#4a90e2', // Работа, бизнес
+        '#3cb371', // Финансы
+        '#ff6666', // Личные отношения, семья
+        '#ffb347', // Творчество
+        '#ffd700', // Личностный рост
+        '#87ceeb', // Отдых, развлечения
+        '#ff69b4'  // Друзья, окружение
+    ];
+
+    const MAX_AREAS = 20;
+
     function saveGoals() {
         const goalsData = {};
         const lifeAreas = document.querySelectorAll('.life-area');
@@ -25,7 +39,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
             
-            goalsData[areaName] = goals;
+            goalsData[index] = {
+                name: areaName,
+                goals: goals
+            };
         });
         
         localStorage.setItem(STORAGE_KEY, JSON.stringify(goalsData));
@@ -39,9 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const goalsData = JSON.parse(savedGoals);
             const lifeAreas = document.querySelectorAll('.life-area');
             
-            lifeAreas.forEach(area => {
-                const areaName = area.querySelector('h3').textContent;
-                const goals = goalsData[areaName] || [];
+            lifeAreas.forEach((area, index) => {
+                const areaData = goalsData[index];
+                if (!areaData) return;
+                
+                const goals = areaData.goals || [];
                 const goalItemsList = area.querySelector('.goal-items');
                 
                 // Clear existing goals
@@ -76,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveSliders() {
         const slidersData = {};
+        const sliders = document.querySelectorAll('.life-area-slider');
         sliders.forEach((slider, index) => {
             slidersData[index] = slider.value;
         });
@@ -88,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             const slidersData = JSON.parse(savedSliders);
+            const sliders = document.querySelectorAll('.life-area-slider');
             sliders.forEach((slider, index) => {
                 if (slidersData[index] !== undefined) {
                     slider.value = slidersData[index];
@@ -359,10 +380,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const lifeAreas = document.querySelectorAll('.life-area');
             
             lifeAreas.forEach((area, index) => {
-                if (areaNamesData[index]) {
+                const savedName = areaNamesData[index];
+                if (savedName) {
                     const areaTitle = area.querySelector('h3');
-                    areaTitle.textContent = areaNamesData[index];
-                    updateWheelLabel(index, areaNamesData[index]);
+                    areaTitle.textContent = savedName;
+                    updateWheelLabel(index, savedName);
                 }
             });
         } catch (error) {
@@ -519,6 +541,66 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Обновляем данные в LocalStorage
         updateStorageAfterDeletion(areaIndex);
+        
+        // Переиндексируем оставшиеся сферы
+        reindexRemainingAreas();
+    }
+
+    function reindexRemainingAreas() {
+        const lifeAreas = document.querySelectorAll('.life-area');
+        lifeAreas.forEach((area, newIndex) => {
+            // Обновляем обработчики событий для слайдера
+            const slider = area.querySelector('.life-area-slider');
+            const valueSpan = area.querySelector('.slider-value');
+            
+            // Удаляем старые обработчики
+            const newSlider = slider.cloneNode(true);
+            slider.parentNode.replaceChild(newSlider, slider);
+            
+            // Добавляем новые обработчики
+            newSlider.addEventListener('input', function() {
+                valueSpan.textContent = this.value;
+                updateWheelSector(newIndex, this.value);
+                saveSliders();
+            });
+
+            // Обновляем обработчики для кнопки удаления
+            const deleteBtn = area.querySelector('.delete-area-btn');
+            const newDeleteBtn = deleteBtn.cloneNode(true);
+            deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+            
+            newDeleteBtn.addEventListener('click', () => {
+                deleteLifeArea(newIndex);
+            });
+
+            // Обновляем обработчики для целей
+            const addGoalBtn = area.querySelector('.add-goal-btn');
+            const goalInput = area.querySelector('.goal-input');
+            
+            const newAddGoalBtn = addGoalBtn.cloneNode(true);
+            addGoalBtn.parentNode.replaceChild(newAddGoalBtn, addGoalBtn);
+            
+            newAddGoalBtn.addEventListener('click', () => {
+                const text = goalInput.value.trim();
+                if (text) {
+                    addGoal(area, text);
+                    goalInput.value = '';
+                }
+            });
+
+            const newGoalInput = goalInput.cloneNode(true);
+            goalInput.parentNode.replaceChild(newGoalInput, goalInput);
+            
+            newGoalInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const text = newGoalInput.value.trim();
+                    if (text) {
+                        addGoal(area, text);
+                        newGoalInput.value = '';
+                    }
+                }
+            });
+        });
     }
 
     function recalculateWheel() {
@@ -532,8 +614,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Пересчитываем каждый сектор
         remainingSectors.forEach((sector, newIndex) => {
-            const oldIndex = parseInt(sector.getAttribute('data-sector-id'));
-            
             // Обновляем data-sector-id
             sector.setAttribute('data-sector-id', newIndex);
             
@@ -600,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalLabels === 0) return;
         
         remainingLabels.forEach((label, newIndex) => {
-            const oldIndex = parseInt(label.getAttribute('data-label-id'));
+            // Обновляем data-label-id
             label.setAttribute('data-label-id', newIndex);
             
             // Определяем text-anchor в зависимости от угла
@@ -700,11 +780,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Initialize data on page load ---
-    loadSliders();
-    loadGoals();
-    loadAreaNames();
-    
     // Функция для инициализации позиций надписей
     function initializeLabelPositions() {
         const labels = document.querySelectorAll('[data-label-id]');
@@ -741,6 +816,11 @@ document.addEventListener('DOMContentLoaded', () => {
             label.setAttribute('text-anchor', textAnchor);
         });
     }
+
+    // --- Initialize data on page load ---
+    loadSliders();
+    loadGoals();
+    loadAreaNames();
     
     // Initialize wheel labels with current area names
     const lifeAreas = document.querySelectorAll('.life-area');
@@ -754,4 +834,202 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Initialize value positions
     updateAllValuePositions();
+
+    // Initialize existing areas
+    initializeExistingAreas();
+
+    // --- Add Area Functionality ---
+    function addNewLifeArea() {
+        const lifeAreas = document.querySelectorAll('.life-area');
+        
+        if (lifeAreas.length >= MAX_AREAS) {
+            alert(`Максимальное количество сфер жизни: ${MAX_AREAS}`);
+            return;
+        }
+
+        const newAreaIndex = lifeAreas.length;
+        const color = SIMS4_COLORS[newAreaIndex % SIMS4_COLORS.length];
+        
+        const newAreaHTML = `
+            <div class="life-area" style="border-color: ${color}">
+                <div class="life-area-header">
+                    <h3>Новая сфера</h3>
+                    <div class="slider-container">
+                        <input type="range" min="1" max="10" value="5" class="life-area-slider">
+                        <span class="slider-value">5</span>
+                    </div>
+                    <button class="delete-area-btn" title="Удалить сферу жизни">🗑️</button>
+                </div>
+                <div class="goals-list">
+                    <ul class="goal-items">
+                        <!-- Здесь будут цели для этой сферы -->
+                    </ul>
+                    <div class="add-goal-form">
+                        <input type="checkbox" class="goal-checkbox" disabled>
+                        <input type="text" class="goal-input" placeholder="Новая цель...">
+                        <button class="add-goal-btn">+</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const lifeAreasContainer = document.querySelector('.life-areas');
+        lifeAreasContainer.insertAdjacentHTML('beforeend', newAreaHTML);
+
+        // Add new sector to wheel
+        addWheelSector(newAreaIndex, color);
+
+        // Initialize the new area
+        const newArea = lifeAreasContainer.lastElementChild;
+        initializeNewArea(newArea, newAreaIndex);
+        
+        // Save data
+        saveGoals();
+        saveSliders();
+        saveAreaNames();
+    }
+
+    function addWheelSector(sectorIndex, color) {
+        const wheelGroup = document.querySelector('#balanceWheel g[transform*="rotate(-22.5"]');
+        if (!wheelGroup) return;
+
+        // Update wheel configuration
+        const totalSectors = sectorIndex + 1;
+        wheelConfig.sectorAngle = 360 / totalSectors;
+
+        // Create new sector
+        const sectorHTML = `
+            <g data-sector-id="${sectorIndex}" class="life-sphere">
+                <path class="sector-pale" fill="${color}" fill-opacity="0.3" d=""></path>
+                <path class="sector-bright" fill="${color}" d=""></path>
+                <text class="sector-value" text-anchor="middle" font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold">5</text>
+            </g>
+        `;
+
+        wheelGroup.insertAdjacentHTML('beforeend', sectorHTML);
+
+        // Create new label
+        const labelHTML = `
+            <text font-size="14" font-family="Segoe UI, Arial" fill="#222" data-label-id="${sectorIndex}">
+                <tspan x="0" y="5" fill="${color}">Новая сфера</tspan>
+            </text>
+        `;
+
+        const labelsGroup = document.querySelector('#balanceWheel g[font-size="14"]');
+        if (labelsGroup) {
+            labelsGroup.insertAdjacentHTML('beforeend', labelHTML);
+        }
+
+        // Update all sectors
+        recalculateWheel();
+        updateAllValuePositions();
+        initializeLabelPositions();
+    }
+
+    function initializeNewArea(areaElement, areaIndex) {
+        // Make area name editable on click (not automatically)
+        const areaTitle = areaElement.querySelector('h3');
+        areaTitle.addEventListener('click', () => {
+            makeAreaNameEditable(areaTitle);
+        });
+
+        // Automatically activate edit mode for new area
+        setTimeout(() => {
+            makeAreaNameEditable(areaTitle);
+        }, 100);
+
+        // Initialize slider
+        const slider = areaElement.querySelector('.life-area-slider');
+        const valueSpan = areaElement.querySelector('.slider-value');
+        
+        slider.addEventListener('input', function() {
+            valueSpan.textContent = this.value;
+            updateWheelSector(areaIndex, this.value);
+            saveSliders();
+        });
+
+        // Initialize goal functionality
+        const addGoalBtn = areaElement.querySelector('.add-goal-btn');
+        const goalInput = areaElement.querySelector('.goal-input');
+        
+        addGoalBtn.addEventListener('click', () => {
+            const text = goalInput.value.trim();
+            if (text) {
+                addGoal(areaElement, text);
+                goalInput.value = '';
+            }
+        });
+
+        goalInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const text = goalInput.value.trim();
+                if (text) {
+                    addGoal(areaElement, text);
+                    goalInput.value = '';
+                }
+            }
+        });
+
+        // Initialize delete button
+        const deleteBtn = areaElement.querySelector('.delete-area-btn');
+        deleteBtn.addEventListener('click', () => {
+            deleteLifeArea(areaIndex);
+        });
+    }
+
+    // Initialize add area button
+    const addAreaBtn = document.getElementById('addAreaBtn');
+    if (addAreaBtn) {
+        addAreaBtn.addEventListener('click', addNewLifeArea);
+    }
+
+    // Initialize existing life areas
+    function initializeExistingAreas() {
+        const lifeAreas = document.querySelectorAll('.life-area');
+        lifeAreas.forEach((area, index) => {
+            // Make area name editable on click (not automatically)
+            const areaTitle = area.querySelector('h3');
+            areaTitle.addEventListener('click', () => {
+                makeAreaNameEditable(areaTitle);
+            });
+
+            // Initialize slider
+            const slider = area.querySelector('.life-area-slider');
+            const valueSpan = area.querySelector('.slider-value');
+            
+            slider.addEventListener('input', function() {
+                valueSpan.textContent = this.value;
+                updateWheelSector(index, this.value);
+                saveSliders();
+            });
+
+            // Initialize goal functionality
+            const addGoalBtn = area.querySelector('.add-goal-btn');
+            const goalInput = area.querySelector('.goal-input');
+            
+            addGoalBtn.addEventListener('click', () => {
+                const text = goalInput.value.trim();
+                if (text) {
+                    addGoal(area, text);
+                    goalInput.value = '';
+                }
+            });
+
+            goalInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const text = goalInput.value.trim();
+                    if (text) {
+                        addGoal(area, text);
+                        goalInput.value = '';
+                    }
+                }
+            });
+
+            // Initialize delete button
+            const deleteBtn = area.querySelector('.delete-area-btn');
+            deleteBtn.addEventListener('click', () => {
+                deleteLifeArea(index);
+            });
+        });
+    }
 }); 
