@@ -432,11 +432,61 @@ document.addEventListener('DOMContentLoaded', () => {
                 lifeAreasContainer.insertAdjacentHTML('beforeend', areaHTML);
             });
             
+            // Restore wheel sectors
+            restoreWheelSectors(areasStructure);
+            
             return true;
         } catch (error) {
             console.error('Error loading areas structure:', error);
             return false;
         }
+    }
+
+    function restoreWheelSectors(areasStructure) {
+        const wheelGroup = document.querySelector('#balanceWheel g[transform*="rotate(-22.5"]');
+        const labelsGroup = document.querySelector('#balanceWheel g[font-size="14"]');
+        
+        if (!wheelGroup || !labelsGroup) {
+            return;
+        }
+        
+        // Clear existing sectors and labels
+        wheelGroup.innerHTML = '';
+        labelsGroup.innerHTML = '';
+        
+        // Update wheel configuration
+        const totalSectors = areasStructure.length;
+        wheelConfig.sectorAngle = 360 / totalSectors;
+        
+        // Recreate sectors and labels
+        areasStructure.forEach((areaData, index) => {
+            // Create sector
+            const sectorHTML = `
+                <g data-sector-id="${index}" class="life-sphere">
+                    <path class="sector-pale" fill="${areaData.color}" fill-opacity="0.3" d=""></path>
+                    <path class="sector-bright" fill="${areaData.color}" d=""></path>
+                    <text class="sector-value" text-anchor="middle" font-size="18" font-family="Segoe UI, Arial" fill="#222" font-weight="bold">${areaData.sliderValue}</text>
+                </g>
+            `;
+            wheelGroup.insertAdjacentHTML('beforeend', sectorHTML);
+            
+            // Create label
+            const labelHTML = `
+                <text font-size="14" font-family="Segoe UI, Arial" fill="#222" data-label-id="${index}">
+                    <tspan x="0" y="5" fill="${areaData.color}">${areaData.name}</tspan>
+                </text>
+            `;
+            labelsGroup.insertAdjacentHTML('beforeend', labelHTML);
+        });
+        
+        // Update all sectors with their values
+        areasStructure.forEach((areaData, index) => {
+            updateWheelSector(index, areaData.sliderValue);
+        });
+        
+        // Update positions
+        updateAllValuePositions();
+        initializeLabelPositions();
     }
 
     function loadAreaNames() {
@@ -903,12 +953,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadAreaNames();
     }
     
-    // Initialize wheel labels with current area names
-    const lifeAreas = document.querySelectorAll('.life-area');
-    lifeAreas.forEach((area, index) => {
-        const areaName = area.querySelector('h3').textContent;
-        updateWheelLabel(index, areaName);
-    });
+    // Initialize wheel labels with current area names (only if structure was not loaded)
+    if (!structureLoaded) {
+        const lifeAreas = document.querySelectorAll('.life-area');
+        lifeAreas.forEach((area, index) => {
+            const areaName = area.querySelector('h3').textContent;
+            updateWheelLabel(index, areaName);
+        });
+    }
     
     // Initialize label positions
     initializeLabelPositions();
